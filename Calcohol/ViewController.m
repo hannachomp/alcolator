@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *beerPercentTextField;
 @property (weak, nonatomic) IBOutlet UISlider *beerCountSlider;
 @property (weak, nonatomic) IBOutlet UILabel *resultLabel;
+@property (strong, nonatomic) IBOutlet UILabel *sliderLabel;
 
 @end
 
@@ -40,21 +41,30 @@
 - (IBAction)sliderValueDidChange:(UISlider *)sender {
     NSLog(@"Slider value changed to %f", sender.value);
     [self.beerPercentTextField resignFirstResponder];
+    UISlider *slider = (UISlider *)sender;
+    NSString *newValue;
+    
+    newValue = [NSString stringWithFormat:@"%f", slider.value];
+    self.sliderLabel.text = newValue;
 }
 
 - (IBAction)buttonPressed:(UIButton *)sender {
+    
     [self.beerPercentTextField resignFirstResponder];
+    
     int numberOfBeers = self.beerCountSlider.value;
     int ouncesInOneBeerGlass = 12;
     float alcoholPercentageOfBeer = [self.beerPercentTextField.text floatValue] / 100;
     float ouncesOfAlcoholPerBeer = ouncesInOneBeerGlass * alcoholPercentageOfBeer;
     float ouncesOfAlcoholTotal = ouncesOfAlcoholPerBeer * numberOfBeers;
-    float ouncesInOneWineGlass = 5;  // wine glasses are usually 5oz
-    float alcoholPercentageOfWine = 0.13;  // 13% is average
+    
+    float ouncesInOneWineGlass = 5;
+    float alcoholPercentageOfWine = 0.13;
     float ouncesOfAlcoholPerWineGlass = ouncesInOneWineGlass * alcoholPercentageOfWine;
     float numberOfWineGlassesForEquivalentAlcoholAmount = ouncesOfAlcoholTotal / ouncesOfAlcoholPerWineGlass;
-    
+  
     NSString *beerText;
+    
     if (numberOfBeers == 1) {
         beerText = NSLocalizedString(@"beer", @"singular beer");
     } else {
@@ -62,20 +72,23 @@
     }
     
     NSString *wineText;
+    
     if (numberOfWineGlassesForEquivalentAlcoholAmount == 1) {
         wineText = NSLocalizedString(@"glass", @"singular glass");
     } else {
         wineText = NSLocalizedString(@"glasses", @"plural of glass");
     }
     
+    
     NSString *resultText = [NSString stringWithFormat:NSLocalizedString(@"%d %@ contains as much alcohol as %.1f %@ of wine.", nil), numberOfBeers, beerText, numberOfWineGlassesForEquivalentAlcoholAmount, wineText];
     self.resultLabel.text = resultText;
-    
-    
-    }
+}
 
-- (IBAction)tapGestureDisFire:(UITapGestureRecognizer *)sender {
+- (IBAction)tapGestureDidFire:(UITapGestureRecognizer *)sender {
     [self.beerPercentTextField resignFirstResponder];
 }
+
+
+
 
 @end
